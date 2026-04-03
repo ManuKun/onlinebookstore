@@ -25,7 +25,7 @@ public class CustomerLoginServlet extends HttpServlet {
         res.setContentType(BookStoreConstants.CONTENT_TYPE_TEXT_HTML);
         String uName = req.getParameter(UsersDBConstants.COLUMN_USERNAME);
         String pWord = req.getParameter(UsersDBConstants.COLUMN_PASSWORD);
-        User user = authService.login(UserRole.CUSTOMER, uName, pWord, req.getSession());
+        User user = authService.login(UserRole.CUSTOMER, uName, pWord, req);
 
         try {
 

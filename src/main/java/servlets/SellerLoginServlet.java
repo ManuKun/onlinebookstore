@@ -26,7 +26,7 @@ public class SellerLoginServlet extends HttpServlet {
         String uName = req.getParameter(UsersDBConstants.COLUMN_USERNAME);
         String pWord = req.getParameter(UsersDBConstants.COLUMN_PASSWORD);
         try {
-            User user = userService.login(UserRole.SELLER, uName, pWord, req.getSession());
+            User user = userService.login(UserRole.SELLER, uName, pWord, req);
             if (user != null) {
                 RequestDispatcher rd = req.getRequestDispatcher("SellerHome.html");
 
