@@ -5,30 +5,39 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class SecurityHeaderFilter implements Filter {
+
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) 
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        
+
         HttpServletResponse res = (HttpServletResponse) response;
 
-        // 1. Prevents Clickjacking
+        // 1. Prevent Clickjacking
         res.setHeader("X-Frame-Options", "DENY");
 
-        // 2. Prevents MIME-sniffing vulnerabilities
+        // 2. Prevent MIME-sniffing vulnerabilities
         res.setHeader("X-Content-Type-Options", "nosniff");
 
-        // 3. Basic Content Security Policy to stop unauthorized scripts
-        res.setHeader("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';");
+        // 3. Content Security Policy (updated to allow Bootstrap CDN)
+        res.setHeader("Content-Security-Policy",
+                "default-src 'self'; " +
+                        "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://ajax.googleapis.com https://code.jquery.com https://maxcdn.bootstrapcdn.com; "
+                        +
+                        "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://maxcdn.bootstrapcdn.com; " +
+                        "font-src 'self' https://cdn.jsdelivr.net https://maxcdn.bootstrapcdn.com; " +
+                        "img-src 'self' data:;");
 
-        // 4. Force HTTPS (if you were using SSL, but good for the report!)
+        // 4. Strict Transport Security (HTTPS enforcement)
         res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
 
         chain.doFilter(request, response);
     }
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {}
+    public void init(FilterConfig filterConfig) throws ServletException {
+    }
 
     @Override
-    public void destroy() {}
+    public void destroy() {
+    }
 }
