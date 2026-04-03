@@ -20,26 +20,23 @@ public class CustomerLoginServlet extends HttpServlet {
 
     UserService authService = new UserServiceImpl();
 
+    // 🔹 Handles login submission (POST)
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-        PrintWriter pw = res.getWriter();
+
         res.setContentType(BookStoreConstants.CONTENT_TYPE_TEXT_HTML);
+        PrintWriter pw = res.getWriter();
+
         String uName = req.getParameter(UsersDBConstants.COLUMN_USERNAME);
         String pWord = req.getParameter(UsersDBConstants.COLUMN_PASSWORD);
+
         User user = authService.login(UserRole.CUSTOMER, uName, pWord, req);
 
         try {
 
             if (user != null) {
 
-                RequestDispatcher rd = req.getRequestDispatcher("CustomerHome.html");
-                rd.include(req, res);
-                pw.println("    <div id=\"topmid\"><h1>Welcome to Online <br>Book Store</h1></div>\r\n"
-                        + "    <br>\r\n"
-                        + "    <table class=\"tab\">\r\n"
-                        + "        <tr>\r\n"
-                        + "            <td><p>Welcome "+user.getFirstName()+", Happy Learning !!</p></td>\r\n"
-                        + "        </tr>\r\n"
-                        + "    </table>");
+                // FIX: Redirect instead of include (PRG pattern)
+                res.sendRedirect("CustomerHome.html");
 
             } else {
 
@@ -53,4 +50,8 @@ public class CustomerLoginServlet extends HttpServlet {
         }
     }
 
+    // 🔹 Optional safety: prevent 404 on GET request
+    public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        res.sendRedirect("CustomerLogin.html");
+    }
 }
