@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.text.StringEscapeUtils; // added
+
 import com.bittercode.constant.BookStoreConstants;
 import com.bittercode.constant.ResponseCode;
 import com.bittercode.constant.db.UsersDBConstants;
@@ -22,6 +24,7 @@ public class CustomerRegisterServlet extends HttpServlet {
     UserService userService = new UserServiceImpl();
 
     public void service(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+
         PrintWriter pw = res.getWriter();
         res.setContentType(BookStoreConstants.CONTENT_TYPE_TEXT_HTML);
 
@@ -31,6 +34,7 @@ public class CustomerRegisterServlet extends HttpServlet {
         String addr = req.getParameter(UsersDBConstants.COLUMN_ADDRESS);
         String phNo = req.getParameter(UsersDBConstants.COLUMN_PHONE);
         String mailId = req.getParameter(UsersDBConstants.COLUMN_MAILID);
+
         User user = new User();
         user.setEmailId(mailId);
         user.setFirstName(fName);
@@ -38,19 +42,32 @@ public class CustomerRegisterServlet extends HttpServlet {
         user.setPassword(pWord);
         user.setPhone(Long.parseLong(phNo));
         user.setAddress(addr);
+
         try {
+
             String respCode = userService.register(UserRole.CUSTOMER, user);
+
             System.out.println(respCode);
+
+            // FIX: Escape output before rendering
+            String safeResp = StringEscapeUtils.escapeHtml4(respCode);
+
             if (ResponseCode.SUCCESS.name().equalsIgnoreCase(respCode)) {
+
                 RequestDispatcher rd = req.getRequestDispatcher("CustomerLogin.html");
                 rd.include(req, res);
+
                 pw.println("<table class=\"tab\"><tr><td>User Registered Successfully</td></tr></table>");
+
             } else {
+
                 RequestDispatcher rd = req.getRequestDispatcher("CustomerRegister.html");
                 rd.include(req, res);
-                pw.println("<table class=\"tab\"><tr><td>" + respCode + "</td></tr></table>");
+
+                pw.println("<table class=\"tab\"><tr><td>" + safeResp + "</td></tr></table>");
                 pw.println("Sorry for interruption! Try again");
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
