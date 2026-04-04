@@ -20,7 +20,7 @@
 	<div class="collapse navbar-collapse">
 		<ul class="navbar-nav">
 			<li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-			<li class="nav-item"><a class="nav-link active" href="login.html">Login</a></li>
+			<li class="nav-item"><a class="nav-link active" href="CustomerLogin.html">Login</a></li>
 			<li class="nav-item"><a class="nav-link" href="CustomerRegister.html">Register</a></li>
 		</ul>
 	</div>
@@ -31,14 +31,16 @@
 	<h1>Welcome to Online Book Store</h1>
 </div>
 
-<!-- NORMAL LOGIN FORM -->
 <form action="userlog" method="post" onsubmit="checkform()" id="theform">
+
 <table class="tab" style="width: 40%">
 
-<tr><td>Customer LOGIN</td></tr>
+<tr>
+<td style="text-align:center; font-weight:bold;">Customer LOGIN</td>
+</tr>
 
 <tr>
-<td>
+<td style="text-align:center;">
 <a href="SellerLogin.html">Seller Login</a>
 </td>
 </tr>
@@ -47,10 +49,10 @@
 <td>
 
 <label>Username :</label>
-<input type="text" name="username"><br><br>
+<input type="text" name="username" class="form-control"><br>
 
 <label>Password :</label>
-<input type="password" name="password"><br><br>
+<input type="password" name="password" class="form-control"><br>
 
 <!-- CAPTCHA -->
 <div class="capbox">
@@ -61,26 +63,33 @@
 </div>
 </div>
 
-<br><br>
+<br>
 
+<!-- NORMAL LOGIN BUTTON -->
+<div style="text-align:center;">
 <input class="btn btn-success" type="submit" value="Login">
+</div>
+
+</td>
+</tr>
+
+<!-- GOOGLE LOGIN BUTTON -->
+<tr>
+<td style="text-align:center; padding-top:20px;">
+
+<p>OR</p>
+
+<a class="btn btn-danger"
+href="https://accounts.google.com/o/oauth2/v2/auth?client_id=906619891428-rvfp34h2c8r5bud3cteu6kb25k2lhev1.apps.googleusercontent.com&redirect_uri=http://localhost:8083/onlinebookstore/oauth&response_type=code&scope=openid%20email%20profile">
+Login with Google
+</a>
 
 </td>
 </tr>
 
 </table>
+
 </form>
-
-<!-- NEW: GOOGLE LOGIN BUTTON -->
-<div style="text-align:center; margin-top:20px;">
-	<p>OR</p>
-
-	<a class="btn btn-danger"
-href="https://accounts.google.com/o/oauth2/v2/auth?client_id=906619891428-rvfp34h2c8r5bud3cteu6kb25k2lhev1.apps.googleusercontent.com&redirect_uri=http://localhost:8083/onlinebookstore/oauth&response_type=code&scope=openid%20email%20profile">
-
-Login with Google
-</a>
-</div>
 
 <!-- Scripts -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
