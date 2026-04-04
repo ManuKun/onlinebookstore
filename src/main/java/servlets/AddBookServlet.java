@@ -36,7 +36,7 @@ public class AddBookServlet extends HttpServlet {
             return;
         }
 
-        // 🔥 CSRF TOKEN VALIDATION (only for POST submission)
+        // CSRF TOKEN VALIDATION (only for POST submission)
         String bName = req.getParameter(BooksDBConstants.COLUMN_NAME);
         if (bName != null) {
             String sessionToken = (String) req.getSession().getAttribute("csrfToken");
@@ -54,7 +54,7 @@ public class AddBookServlet extends HttpServlet {
 
         pw.println("<div class='container my-2'>");
 
-        // 🔥 Generate CSRF token when loading form
+        // Generate CSRF token when loading form
         if (bName == null || bName.isBlank()) {
             String csrfToken = UUID.randomUUID().toString();
             req.getSession().setAttribute("csrfToken", csrfToken);
@@ -67,7 +67,7 @@ public class AddBookServlet extends HttpServlet {
             String uniqueID = UUID.randomUUID().toString();
             String bCode = uniqueID;
 
-            // 🔥 XSS FIX
+            // XSS FIX
             bName = StringEscapeUtils.escapeHtml4(bName);
             String bAuthor = StringEscapeUtils.escapeHtml4(
                     req.getParameter(BooksDBConstants.COLUMN_AUTHOR));
@@ -91,7 +91,7 @@ public class AddBookServlet extends HttpServlet {
         }
     }
 
-    // 🔥 Updated form method (includes CSRF token)
+    // Updated form method (includes CSRF token)
     private static void showAddBookForm(PrintWriter pw, String csrfToken) {
 
         String form = "<table class=\"tab my-5\" style=\"width:40%;\">\r\n"
