@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.text.StringEscapeUtils; // 🔥 Added
+import org.apache.commons.text.StringEscapeUtils;
 
 import com.bittercode.constant.BookStoreConstants;
 import com.bittercode.constant.db.BooksDBConstants;
@@ -36,7 +36,17 @@ public class AddBookServlet extends HttpServlet {
             return;
         }
 
+        // 🔥 CSRF TOKEN VALIDATION (only for POST submission)
         String bName = req.getParameter(BooksDBConstants.COLUMN_NAME);
+        if (bName != null) {
+            String sessionToken = (String) req.getSession().getAttribute("csrfToken");
+            String requestToken = req.getParameter("csrfToken");
+
+            if (sessionToken == null || !sessionToken.equals(requestToken)) {
+                res.sendError(HttpServletResponse.SC_FORBIDDEN, "CSRF detected");
+                return;
+            }
+        }
 
         RequestDispatcher rd = req.getRequestDispatcher("SellerHome.html");
         rd.include(req, res);
@@ -44,8 +54,11 @@ public class AddBookServlet extends HttpServlet {
 
         pw.println("<div class='container my-2'>");
 
+        // 🔥 Generate CSRF token when loading form
         if (bName == null || bName.isBlank()) {
-            showAddBookForm(pw);
+            String csrfToken = UUID.randomUUID().toString();
+            req.getSession().setAttribute("csrfToken", csrfToken);
+            showAddBookForm(pw, csrfToken);
             return;
         }
 
@@ -54,7 +67,7 @@ public class AddBookServlet extends HttpServlet {
             String uniqueID = UUID.randomUUID().toString();
             String bCode = uniqueID;
 
-            // 🔥 FIX: Escape user inputs
+            // 🔥 XSS FIX
             bName = StringEscapeUtils.escapeHtml4(bName);
             String bAuthor = StringEscapeUtils.escapeHtml4(
                     req.getParameter(BooksDBConstants.COLUMN_AUTHOR));
@@ -78,12 +91,14 @@ public class AddBookServlet extends HttpServlet {
         }
     }
 
-    private static void showAddBookForm(PrintWriter pw) {
+    // 🔥 Updated form method (includes CSRF token)
+    private static void showAddBookForm(PrintWriter pw, String csrfToken) {
 
         String form = "<table class=\"tab my-5\" style=\"width:40%;\">\r\n"
                 + "        <tr>\r\n"
                 + "            <td>\r\n"
                 + "                <form action=\"addbook\" method=\"post\">\r\n"
+                + "                    <input type='hidden' name='csrfToken' value='" + csrfToken + "'/>\r\n"
                 + "                    <label for=\"bookName\">Book Name : </label> <input type=\"text\" name=\"name\" id=\"bookName\" placeholder=\"Enter Book's name\" required><br/>\r\n"
                 + "                    <label for=\"bookAuthor\">Book Author : </label><input type=\"text\" name=\"author\" id=\"bookAuthor\" placeholder=\"Enter Author's Name\" required><br/>\r\n"
                 + "                    <label for=\"bookPrice\">Book Price : </label><input type=\"number\" name=\"price\" placeholder=\"Enter the Price\" required><br/>\r\n"
