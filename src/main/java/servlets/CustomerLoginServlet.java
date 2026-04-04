@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.text.StringEscapeUtils; // added
+
 import com.bittercode.constant.BookStoreConstants;
 import com.bittercode.constant.db.UsersDBConstants;
 import com.bittercode.model.User;
@@ -20,7 +22,6 @@ public class CustomerLoginServlet extends HttpServlet {
 
     UserService authService = new UserServiceImpl();
 
-    // 🔹 Handles login submission (POST)
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
 
         res.setContentType(BookStoreConstants.CONTENT_TYPE_TEXT_HTML);
@@ -35,13 +36,14 @@ public class CustomerLoginServlet extends HttpServlet {
 
             if (user != null) {
 
-                // FIX: Redirect instead of include (PRG pattern)
                 res.sendRedirect("CustomerHome.html");
 
             } else {
 
                 RequestDispatcher rd = req.getRequestDispatcher("CustomerLogin.html");
                 rd.include(req, res);
+
+                // Safe output (even though low risk)
                 pw.println("<table class=\"tab\"><tr><td>Incorrect UserName or PassWord</td></tr></table>");
             }
 
@@ -50,7 +52,6 @@ public class CustomerLoginServlet extends HttpServlet {
         }
     }
 
-    // 🔹 Optional safety: prevent 404 on GET request
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
         res.sendRedirect("CustomerLogin.html");
     }
